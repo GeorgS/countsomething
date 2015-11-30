@@ -7,5 +7,5 @@ As I am trying to learn react and redux I did this little project to get familia
 
 ### Run
 
-To start the application just enter `npm start` and the page will be accessible at `localhost:3333`.
+First you need to download all the dependencies with `npm install`. To start the application just enter `npm start`, the page will be accessible at `localhost:3333`.
 The state is stored in `store/state.json` and the clients sync trough socket.io.
