@@ -1,4 +1,5 @@
 ## CountSomething
+![](http://i.imgur.com/jBPdBlm.gif)
 
 ### Purpose
 
