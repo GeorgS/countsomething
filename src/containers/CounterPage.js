@@ -8,7 +8,8 @@ function mapStateToProps(state) {
   return {
     counters: state.counter.counters,
     categories: state.counter.categories,
-    locations: state.counter.stores
+    locations: state.counter.stores,
+    lastAction: state.lastAction
   };
 }
 

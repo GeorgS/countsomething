@@ -5,6 +5,7 @@ import AddCounter from './AddCounter';
 import {exportCSV} from '../utils/export';
 import {today} from '../utils/general';
 const FloatingActionButton = require('material-ui/lib/floating-action-button');
+const Snackbar = require('material-ui/lib/snackbar');
 
 export default class CounterList extends Component {
 
@@ -56,11 +57,19 @@ export default class CounterList extends Component {
    exportCSV({locations: this.props.locations, counters: this.props.counters});
  }
 
+ handleSync() {
+   if (this.props.lastAction.type === 'SET_STATE') {
+     this.refs.synced.show();
+   }
+ }
+
   render() {
     const _this = this;
     const { addCounter, removeCounter, overwriteTotal, increment, counters, categories, locations, decrement} = this.props;
     const _categories = Object.keys(categories).map(function mapthis(cat) { return {payload: cat, text: categories[cat], route: ''}; });
     const _locations = Object.keys(locations).map(function mapthis(loc) { return {payload: loc, text: locations[loc], route: ''}; });
+
+    this.handleSync();
 
     return (
       <div style={{fontFamily: 'Robto, System, sans-serif'}}>
@@ -89,6 +98,11 @@ export default class CounterList extends Component {
               hasStore={counters[index].hasStore} />);
           }
         }) }
+
+        <Snackbar
+          ref="synced"
+          message="Synced with Server"
+          autoHideDuration={5000}/>
       </div>
     );
   }
