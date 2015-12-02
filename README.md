@@ -4,7 +4,7 @@
 ### Purpose
 
 I wrote this react/redux application during my civil service in Austria. We had to fill in printed sheets about the amount of food/drinks we sold on a day and calculate how much is left in the kitchen and in the basement.
-As I am trying to learn react and redux I did this little project to get familiar with these technologies.
+As I was trying to learn react and redux I did this little project to get familiar with these technologies.
 
 ### Run
 
