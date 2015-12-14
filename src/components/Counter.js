@@ -15,7 +15,6 @@ export default class Counter extends Component {
     increment: PropTypes.func.isRequired,
     decrement: PropTypes.func.isRequired,
     removeCounter: PropTypes.func.isRequired,
-    overwriteTotal: PropTypes.func.isRequired,
     count: PropTypes.number.isRequired,
     price: PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
@@ -40,8 +39,9 @@ export default class Counter extends Component {
     this.props.removeCounter(this.props.index);
   }
 
-  overwriteTotal() {
-    this.props.overwriteTotal(this.props.index, parseFloat(this.refs.totalOverwrite.getValue()), this.props.hasStore ? this.props.location : 'noStore');
+  edit(event) {
+    event.stopPropagation();
+    this.props.edit(this.props.index);
   }
 
   render() {
@@ -56,9 +56,9 @@ export default class Counter extends Component {
     subtitle={<span>Price: {price} €<br/>{ this.props.hasStore ? ('Total: ' + total) : ''}</span>}/>
   <CardActions expandable={true} style={{marginTop: '20px'}}>
     <RaisedButton label={ '-' } onTouchTap={::this.increment}/>
-    <RaisedButton label={ '+' } onTouchTap={::this.decrement}/><br />
-    <TextField ref="totalOverwrite" hintText="Value to overwrite with"/><RaisedButton label={ 'overwrite total' } onTouchTap={::this.overwriteTotal}/>
+    <RaisedButton label={ '+' } onTouchTap={::this.decrement}/><br /><br />
     <RaisedButton label="delete" onTouchTap={::this.remove}><FontIcon className="material-icons">clear</FontIcon></RaisedButton>
+    <RaisedButton label="edit" onTouchTap={::this.edit}><FontIcon className="material-icons">edit</FontIcon></RaisedButton>
   </CardActions>
   <CardText/>
 </Card>

@@ -6,8 +6,7 @@ export const REDO_COUNTER = 'REDO_COUNTER';
 
 export const ADD_COUNTER = 'ADD_COUNTER';
 export const REMOVE_COUNTER = 'REMOVE_COUNTER';
-
-export const OVERWRITE_TOTAL = 'OVERWRITE_TOTAL';
+export const EDIT_COUNTER = 'EDIT_COUNTER';
 
 export const SET_STATE = 'SET_STATE';
 
@@ -46,7 +45,7 @@ export function addCounter(props) {
     type: ADD_COUNTER,
     name: props.name,
     price: props.price,
-    total: props.amount || {},
+    total: props.total || {},
     category: props.category,
     hasStore: props.hasStore
   };
@@ -59,11 +58,10 @@ export function removeCounter(index) {
   };
 }
 
-export function overwriteTotal(index, amount, store) {
+export function editCounter(counter) {
   return {
-    type: OVERWRITE_TOTAL,
-    index,
-    amount,
-    store
+    type: EDIT_COUNTER,
+    index: counter.id,
+    counter
   };
 }

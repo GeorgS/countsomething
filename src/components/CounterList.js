@@ -18,7 +18,6 @@ export default class CounterList extends Component {
     counters: PropTypes.object.isRequired,
     addCounter: PropTypes.func.isRequired,
     removeCounter: PropTypes.func.isRequired,
-    overwriteTotal: PropTypes.func.isRequired,
     locations: PropTypes.object.isRequired,
     categories: PropTypes.object.isRequired
   }
@@ -26,18 +25,23 @@ export default class CounterList extends Component {
   state = {
     showDialog: false,
     activeCategory: 1,
-    activeLocation: 1
+    activeLocation: 1,
+    edit: false,
+    editIndex: 0,
+    barcode: ''
   }
 
   openDialog() {
     this.setState({
-      showDialog: true
+      showDialog: true,
+      edit: false
     });
   }
 
  _handleRequestClose() {
    this.setState({
-     showDialog: false
+     showDialog: false,
+     edit: false
    });
  }
 
@@ -57,29 +61,63 @@ export default class CounterList extends Component {
    exportCSV({locations: this.props.locations, counters: this.props.counters});
  }
 
+ edit(event, index) {
+   this.setState({
+     edit: true,
+     showDialog: true,
+     editIndex: index
+   });
+ }
+
  handleSync() {
    if (this.props.lastAction.type === 'SET_STATE') {
      this.refs.synced.show();
    }
  }
 
+ componentDidMount () {
+   document.addEventListener('keydown', ::this.handleKeyDown);
+ }
+
+componentWillUnmount() {
+      //document.off('keydown', this.handleKeyDown);
+}
+
+ handleKeyDown(e) {
+   var code = (e.keyCode ? e.keyCode : e.which);
+   if(code==13)// Enter key hit
+   {
+     alert(this.state.barcode);
+     this.state.barcode = '';
+   }
+   else if(code==9)// Tab key hit
+   {
+     alert(this.state.barcode);
+     this.state.barcode = '';
+   }
+   else
+   {
+     this.state.barcode += String.fromCharCode(code);
+   }
+ }
+
   render() {
     const _this = this;
-    const { addCounter, removeCounter, overwriteTotal, increment, counters, categories, locations, decrement} = this.props;
+    const { addCounter, removeCounter, editCounter, increment, counters, categories, locations, decrement} = this.props;
     const _categories = Object.keys(categories).map(function mapthis(cat) { return {payload: cat, text: categories[cat], route: ''}; });
     const _locations = Object.keys(locations).map(function mapthis(loc) { return {payload: loc, text: locations[loc], route: ''}; });
 
     this.handleSync();
 
     return (
-      <div style={{fontFamily: 'Robto, System, sans-serif'}}>
+      <div onKeyDown={::this.handleKeyDown} style={{fontFamily: 'Robto, System, sans-serif'}}>
       <Navigation ref="nav" onChangeCat={::this.navChange} onChangeLoc={::this.locationChange} export={::this.exportCSV} categories={_categories} locations={_locations}/>
 
         <FloatingActionButton style={{position: 'fixed', bottom: '1em', right: '1em', zIndex: 1}} onTouchTap={::this.openDialog}>
           <i className="material-icons" style={{color: 'white'}}>add</i>
         </FloatingActionButton>
 
-        <AddCounter show={this.state.showDialog} handleRequestClose={::this._handleRequestClose} addCounter={addCounter} locations={locations} categories={_categories}/>
+        <AddCounter edit={this.state.edit} index={this.state.editIndex} counter={counters[this.state.editIndex] || null} show={this.state.showDialog} handleRequestClose={::this._handleRequestClose} addCounter={addCounter} editCounter={editCounter} locations={locations} categories={_categories}/>
 
         { Object.keys(counters).map(function mapCounters(index) {
           if (counters[index].category === _this.state.activeCategory) {
@@ -93,7 +131,7 @@ export default class CounterList extends Component {
               increment={increment}
               decrement={decrement}
               removeCounter={removeCounter}
-              overwriteTotal={overwriteTotal}
+              edit={_this.edit.bind(_this, counters[index].id)}
               total={((counters[index].total || 0)[_this.state.activeLocation] || 0)}
               hasStore={counters[index].hasStore} />);
           }

@@ -1,4 +1,4 @@
-import { INCREMENT_COUNTER, DECREMENT_COUNTER, ADD_COUNTER, REMOVE_COUNTER, OVERWRITE_TOTAL, SET_STATE } from '../actions/counter';
+import { INCREMENT_COUNTER, DECREMENT_COUNTER, ADD_COUNTER, REMOVE_COUNTER, SET_STATE, EDIT_COUNTER } from '../actions/counter';
 import {today} from '../utils/general';
 const update = require('react/lib/update');
 
@@ -9,9 +9,9 @@ const initialState = {
 };
 
 export default function counter(state = initialState, action) {
-  const countToday = action.index ? ((state.counters[action.index].counts || 0)[today()] || 0)[action.store] || 0 : 0;
-  const countTotal = action.index ? (state.counters[action.index].total[action.store] || 0) : 0;
-  const hasStore = action.index ? (state.counters[action.index].hasStore || false) : false;
+  const countToday = action.index ? (((state.counters[action.index] || 0).counts || 0)[today()] || 0)[action.store] || 0 : 0;
+  const countTotal = action.index ? (((state.counters[action.index] || 0).total || 0)[action.store] || 0) : 0;
+  const hasStore = action.index ? ((state.counters[action.index] || 0).hasStore || false) : false;
   switch (action.type) {
   case SET_STATE:
     return action.payload || state;
@@ -49,20 +49,20 @@ export default function counter(state = initialState, action) {
         }
       }
     });
-  case OVERWRITE_TOTAL:
-    return update(state, {
-      counters: {
-        [action.index]: {
-          total: { $merge: {[action.store]: action.amount}}
-        }
-      }
-    });
   case REMOVE_COUNTER:
     return update(state, {
       counters: {$apply: function(counters) {
         delete counters[action.index];
         return counters;
       }}
+    });
+  case EDIT_COUNTER:
+    return update(state, {
+      counters: {
+        [action.index]: {
+          $merge: action.counter
+        }
+      }
     });
   default:
     return state;

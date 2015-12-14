@@ -12,7 +12,6 @@ export default class AddCounter extends Component {
   }
 
   state = {
-    newCounterCategory: 1,
     show: false,
     showStoreOptions: false
   }
@@ -29,7 +28,7 @@ export default class AddCounter extends Component {
     this.props.handleRequestClose();
   }
 
-  addCounter() {
+  generateCounter(edit) {
     const _this = this;
     const hasStorage = this.refs.hasStorage.isChecked();
     const locations = this.props.locations;
@@ -38,17 +37,20 @@ export default class AddCounter extends Component {
     Object.keys(locations).forEach(function(key) {
       stores[key] = _this.refs['location_' + key].getValue();
     });
-    
-    this.props.addCounter({
+
+    return {
       name: _this.refs.newCounterName.getValue(),
-      amount: hasStorage ? stores : parseFloat(_this.refs.newCounterAmount.getValue()),
+      total: hasStorage ? stores : parseFloat(_this.refs.newCounterAmount.getValue()),
       category: this.state.newCounterCategory,
       hasStore: hasStorage,
       price: parseFloat(_this.refs.newCounterPrice.getValue().replace(',', '.'))
-    });
+    }
+  }
+
+  addCounter() {
+    this.props.addCounter(this.generateCounter());
 
     React.findDOMNode(this.refs.newCounterName).value = '';
-    React.findDOMNode(this.refs.newCounterAmount).value = '';
     this._handleRequestClose();
   }
 
@@ -56,32 +58,44 @@ export default class AddCounter extends Component {
     this.setState({showStoreOptions: checked});
   };
 
+  editCounter() {
+    const edited = this.generateCounter();
+    edited.id = this.props.index;
+    edited.category++;
+    this.props.editCounter(edited);
+
+    React.findDOMNode(this.refs.newCounterName).value = '';
+    this._handleRequestClose();
+  }
+
   render() {
-    const {categories, locations} = this.props;
+    const {categories, locations, edit, counter} = this.props;
+    console.log(counter, this.props.index, categories);
     return (<Dialog
-            title="Add Counter"
+            title={edit ? 'Edit Counter' : 'Add Counter'}
             ref="addDialog"
             actions={[
               { text: 'Cancel' },
-              { text: 'Add', onTouchTap: ::this.addCounter, ref: 'submit' }
+              { text: edit ? 'Save' : 'Add', onTouchTap: edit ? ::this.editCounter : ::this.addCounter, ref: 'submit' }
             ]}
             actionFocus="submit"
             open={this.props.show}
             onRequestClose={::this._handleRequestClose}>
-            <TextField ref="newCounterName" hintText="Name"/><br/>
-            <TextField ref="newCounterPrice" hintText="Price"/><br/>
-            <span style={{display: this.state.showStoreOptions ? 'none' : 'block'}}><TextField ref="newCounterAmount" hintText="Total"/><br/></span>
-            <span style={{display: this.state.showStoreOptions ? 'block' : 'none'}}>
+            <TextField ref="newCounterName" hintText="Name" defaultValue={edit ? counter.name : ''}/><br/>
+            <TextField ref="newCounterPrice" hintText="Price" defaultValue={edit ? counter.price : ''}/><br/>
+            {/*<span style={{display: this.state.showStoreOptions ? 'none' : 'block'}}><TextField ref="newCounterAmount" hintText="Total"/><br/></span>*/}
+            <span style={{display: (this.state.showStoreOptions || (edit && counter.hasStore)) ? 'block' : 'none'}}>
               { Object.keys(locations).map(function(key, index) {
-                return <div key={index}><TextField ref={'location_' + key} hintText={'Total ' + locations[key]}/></div>;
+                return <div key={index}><TextField ref={'location_' + key} hintText={'Total ' + locations[key]} defaultValue={edit ? counter.total[key] : ''}/></div>;
               })}
             </span>
-            Category: <DropDownMenu onChange={::this.newCounterDropdownChange} ref="newCounterCategory" menuItems={categories}/><br/><br/>
+            Category: <DropDownMenu selectedIndex={this.state.newCounterCategory || (edit ? counter.category-1 : 0)} onChange={::this.newCounterDropdownChange} ref="newCounterCategory" menuItems={categories}/><br/><br/>
             <Checkbox
               name="checkboxStorage1"
               value="hasStorage"
               label="has storage"
               ref="hasStorage"
+              defaultChecked={edit ? counter.hasStore : false}
               onCheck={::this.checkBoxCheck}/>
           </Dialog>);
   }
