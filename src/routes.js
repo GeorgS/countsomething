@@ -5,12 +5,14 @@ import * as containers from './containers';
 
 
 const {
-  CounterPage
+  CounterPage,
+  StatsPage
 } = containers;
 
 
 export default (
   <Route component={App}>
     <Route path="/" component={CounterPage} />
+    <Route path="stats" component={StatsPage} />
   </Route>
 );
