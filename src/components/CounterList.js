@@ -31,6 +31,14 @@ export default class CounterList extends Component {
     barcode: ''
   }
 
+  componentDidMount() {
+    document.addEventListener('keydown', ::this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', ::this.handleKeyDown);
+  }
+
   openDialog() {
     this.setState({
       showDialog: true,
@@ -75,28 +83,17 @@ export default class CounterList extends Component {
    }
  }
 
- componentDidMount () {
-   document.addEventListener('keydown', ::this.handleKeyDown);
- }
-
-componentWillUnmount() {
-      //document.off('keydown', this.handleKeyDown);
-}
-
- handleKeyDown(e) {
-   var code = (e.keyCode ? e.keyCode : e.which);
-   if(code==13)// Enter key hit
-   {
-     alert(this.state.barcode);
+ handleKeyDown(event) {
+   var code = (event.keyCode ? event.keyCode : event.which);
+   if (code === 13) { // Enter key hit
+     const item = this.props.barcodes[this.state.barcode];
+     console.log(this.state.barcode);
+     console.log(item);
+     if (item) {
+       this.props.decrement(item, 1, this.state.activeLocation);
+     }
      this.state.barcode = '';
-   }
-   else if(code==9)// Tab key hit
-   {
-     alert(this.state.barcode);
-     this.state.barcode = '';
-   }
-   else
-   {
+   } else {
      this.state.barcode += String.fromCharCode(code);
    }
  }

@@ -5,7 +5,8 @@ const update = require('react/lib/update');
 const initialState = {
   counters: {},
   categories: {'1': 'Essen', '2': 'Softdrinks', '3': 'Kaffee', '4': 'Frühstück', '5': 'Eis', '6': 'Andere'},
-  stores: {'1': 'Küche', '2': 'Keller'}
+  stores: {'1': 'Küche', '2': 'Keller'},
+  barcodes: {}
 };
 
 export default function counter(state = initialState, action) {

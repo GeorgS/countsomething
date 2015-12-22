@@ -9,6 +9,7 @@ function mapStateToProps(state) {
     counters: state.counter.counters,
     categories: state.counter.categories,
     locations: state.counter.stores,
+    barcodes: state.counter.barcodes,
     lastAction: state.lastAction
   };
 }
