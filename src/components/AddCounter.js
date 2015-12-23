@@ -41,7 +41,7 @@ export default class AddCounter extends Component {
     return {
       name: _this.refs.newCounterName.getValue(),
       total: hasStorage ? stores : parseFloat(_this.refs.newCounterAmount.getValue()),
-      category: this.state.newCounterCategory,
+      category: (this.state.newCounterCategory + 1) || this.props.counter.category || 0,
       hasStore: hasStorage,
       price: parseFloat(_this.refs.newCounterPrice.getValue().replace(',', '.'))
     }
@@ -61,7 +61,6 @@ export default class AddCounter extends Component {
   editCounter() {
     const edited = this.generateCounter();
     edited.id = this.props.index;
-    edited.category++;
     this.props.editCounter(edited);
 
     React.findDOMNode(this.refs.newCounterName).value = '';
@@ -89,7 +88,7 @@ export default class AddCounter extends Component {
                 return <div key={index}><TextField ref={'location_' + key} hintText={'Total ' + locations[key]} defaultValue={edit ? counter.total[key] : ''}/></div>;
               })}
             </span>
-            Category: <DropDownMenu selectedIndex={this.state.newCounterCategory || (edit ? counter.category-1 : 0)} onChange={::this.newCounterDropdownChange} ref="newCounterCategory" menuItems={categories}/><br/><br/>
+            Category: <DropDownMenu selectedIndex={this.state.newCounterCategory || (edit ? (counter.category-1) : 0)} onChange={::this.newCounterDropdownChange} ref="newCounterCategory" menuItems={categories}/><br/><br/>
             <Checkbox
               name="checkboxStorage1"
               value="hasStorage"
