@@ -35,7 +35,7 @@ export default class AddCounter extends Component {
     const stores = {};
 
     Object.keys(locations).forEach(function(key) {
-      stores[key] = _this.refs['location_' + key].getValue();
+      stores[key] = parseFloat(_this.refs['location_' + key].getValue());
     });
 
     return {
