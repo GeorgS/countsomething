@@ -13,7 +13,7 @@ export const exportCSV = function exportCSV(props) {
   var totalSum = 0;
   str += locationsStr;
   str += '; ; ;' + locationsStr + '\r\n';
-  for (var i = 1; i < Object.keys(array).length+1; i++) {
+  for (var i = 1; i <= Object.keys(array).length+1; i++) {
     if (array.hasOwnProperty(i)) {
       var line = new Array();
       line.push('"' + array[i].name + '"');
