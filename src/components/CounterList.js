@@ -3,7 +3,8 @@ import Counter from './Counter';
 import Navigation from './Navigation';
 import AddCounter from './AddCounter';
 import {exportCSV} from '../utils/export';
-import {today} from '../utils/general';
+import {today, formatDate} from '../utils/general';
+import PickDate from './PickDate';
 const FloatingActionButton = require('material-ui/lib/floating-action-button');
 const Snackbar = require('material-ui/lib/snackbar');
 
@@ -17,6 +18,8 @@ export default class CounterList extends Component {
     redo: PropTypes.func.isRequired,
     counters: PropTypes.object.isRequired,
     addCounter: PropTypes.func.isRequired,
+    editCounter: PropTypes.func.isRequired,
+    lastAction: PropTypes.func.isRequired,
     removeCounter: PropTypes.func.isRequired,
     locations: PropTypes.object.isRequired,
     categories: PropTypes.object.isRequired
@@ -28,7 +31,8 @@ export default class CounterList extends Component {
     activeLocation: 1,
     edit: false,
     editIndex: 0,
-    barcode: ''
+    barcode: '',
+    showPickDate: false
   }
 
   componentDidMount() {
@@ -98,6 +102,20 @@ export default class CounterList extends Component {
    }
  }
 
+ changeDate() {
+   this.setState({showPickDate: true});
+ }
+
+ handleChangeDate(_date) {
+   if (_date) {
+     var date = new Date(_date);
+     localStorage.setItem('tempDate', formatDate(date));
+   }
+   this.setState({
+     showPickDate: false
+   });
+ }
+
   render() {
     const _this = this;
     const { addCounter, removeCounter, editCounter, increment, counters, categories, locations, decrement} = this.props;
@@ -108,7 +126,9 @@ export default class CounterList extends Component {
 
     return (
       <div onKeyDown={::this.handleKeyDown} style={{fontFamily: 'Robto, System, sans-serif'}}>
-      <Navigation ref="nav" onChangeCat={::this.navChange} onChangeLoc={::this.locationChange} export={::this.exportCSV} categories={_categories} locations={_locations}/>
+      <Navigation ref="nav" onChangeCat={::this.navChange} onChangeLoc={::this.locationChange} export={::this.exportCSV} changeDate={::this.changeDate} categories={_categories} locations={_locations}/>
+
+        <PickDate show={this.state.showPickDate} handleChange={::this.handleChangeDate}/>
 
         <FloatingActionButton style={{position: 'fixed', bottom: '1em', right: '1em', zIndex: 1}} onTouchTap={::this.openDialog}>
           <i className="material-icons" style={{color: 'white'}}>add</i>

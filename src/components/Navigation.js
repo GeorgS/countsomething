@@ -4,6 +4,7 @@ const AppBar = require('material-ui/lib/app-bar');
 const MenuItem = require('material-ui/lib/menus/menu-item');
 const IconButton = require('material-ui/lib/icon-button');
 const IconMenu = require('material-ui/lib/menus/icon-menu');
+import {today} from '../utils/general';
 
 export default class Navigation extends Component {
 
@@ -12,6 +13,7 @@ export default class Navigation extends Component {
     locations: PropTypes.array.isRequired,
     onChangeCat: PropTypes.func.isRequired,
     onChangeLoc: PropTypes.func.isRequired,
+    changeDate: PropTypes.func.isRequired,
     export: PropTypes.func.isRequired
   }
 
@@ -58,18 +60,20 @@ export default class Navigation extends Component {
 
   render() {
     const { categories, locations } = this.props;
+    var _today = today().split('');
+    _today = _today[4] + '.' + (parseInt(_today[3], 10) + 1) + '.20' + _today[1] + _today[2];
     return (<div>
 <LeftNav docked={false} header={<div style={{background: '#00bcd4', color: '#fff', cursor: 'pointer', fontSize: '1.5em', fontWeight: 300, lineHeight: '2.65em', marginBottom: '8px', paddingLeft: '24px', paddingTop: '0px'}}>Kategorie</div>} selectedIndex={this._getSelectedIndexCat()} onChange={::this.onChangeCat} ref="leftNavCat" menuItems={categories} />
 <LeftNav docked={false} header={<div style={{background: '#00bcd4', color: '#fff', cursor: 'pointer', fontSize: '1.5em', fontWeight: 300, lineHeight: '2.65em', marginBottom: '8px', paddingLeft: '24px', paddingTop: '0px'}}>Location</div>} selectedIndex={this._getSelectedIndexLoc()} onChange={::this.onChangeLoc} ref="leftNavLoc" menuItems={locations} />
       <AppBar
-    title="CountSomething"
+    title=<span>CountSomething <span style={{opacity: 0.7, fontSize: '80%', float: 'right'}}>{_today}</span></span>
     iconElementRight={
     <IconMenu iconButtonElement={
       <IconButton><i className="material-icons">more_vert</i></IconButton>
     }>
       <MenuItem onTouchTap={::this.toggleNavLoc} primaryText="Location" />
       <MenuItem onTouchTap={this.props.export} primaryText="Export" />
-      <MenuItem primaryText="Date" />
+      <MenuItem onTouchTap={this.props.changeDate} primaryText="Date" />
     </IconMenu>
   }
     onLeftIconButtonTouchTap={::this.toggleNavCat}/></div>);
