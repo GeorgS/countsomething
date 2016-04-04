@@ -35,11 +35,13 @@ export default function counter(state = initialState, action) {
       }
     });
   case ADD_COUNTER:
+    var keys = Object.keys(state.counters);
+    var newKey = parseInt(keys[keys.length - 1], 10) + 1;
     return update(state, {
       counters: {
         $merge: {
-          [Object.keys(state.counters).length + 1]: {
-            id: Object.keys(state.counters).length + 1,
+          [newKey]: {
+            id: newKey,
             total: action.hasStore ? action.total : {noStore: action.total},
             name: action.name,
             counts: {},
